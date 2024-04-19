@@ -20,7 +20,8 @@
 //void initADC(void);
 void initUART9600(void);
 void writeUART(char Caracter);
- volatile uint8_t  datoTX;
+void writeTextUART(char * Texto);
+volatile uint8_t  datoTX;
 
 
 int main(void)
@@ -32,13 +33,11 @@ int main(void)
 	initUART9600();
 	
 	sei(); //Activar interrupciones
-	writeUART('H');
-	writeUART('O');
-	writeUART('L');
-	writeUART('A');
-	writeUART('M');
-	writeUART('U');
-	writeUART('\n');
+	
+	writeTextUART("UVG");   //Mostrar inicio 
+	writeUART(10);
+	writeUART(13);
+	
 	
 	while (1)
 	{
@@ -100,10 +99,20 @@ void writeUART(char Caracter)
 		
 }
 
+
+void writeTextUART(char * Texto){
+	uint8_t o;
+	for(o = 0; Texto[o]!= '\0'; o++){
+		while(!(UCSR0A & (1<<UDRE0)));
+			UDR0 = Texto[o];
+	}
+}
+
 ISR(USART_RX_vect)
 {
 	datoTX = UDR0;
-//	while(!(UCSR0A & (1<<UDRE0)));  //hasta que la bandera este en 1
-		UDR0 = datoTX;
+	UDR0 = datoTX;
+	writeUART(10);
+	writeUART(13);
 	
 }
