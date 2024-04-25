@@ -2,10 +2,10 @@
 // Universidad Del Valle De Guatemala
 // IE2023: Programación de Microcontroladores
 // Autor: Samuel Tortola - 22094
-// Proyecto: Laboratorio 5
+// Proyecto: Laboratorio 6
 // Hardware: Atmega238P
 // Creado: 19/04/2024
-//Última modificación: 19/04/2024
+//Última modificación: 24/04/2024
 //******************************************************************************
 
 #define F_CPU 16000000
@@ -15,37 +15,69 @@
 #include <stdint.h>
 
 
-//int dato;
-
-//void initADC(void);
+int activa = 0, activa2 = 0;
+char dato;
+void initADC(void);
 void initUART9600(void);
 void writeUART(char Caracter);
 void writeTextUART(char * Texto);
 volatile uint8_t  datoTX;
+volatile char receivedChar = 0;
 
 
 int main(void)
 {
-	DDRB = 0b11111111;  //Salida hacia LEDs
-	PORTB = 0b00000000;	//Iniciamos los leds apagados
+	DDRB = 0b00111111;  //Salida hacia LEDs  PB0 a PB5
+	DDRD |= 0b11000000; // Configura PD6 y PD7 como salidas 
 		
-	//initADC();
+	initADC();
 	initUART9600();
 	
 	sei(); //Activar interrupciones
 	
-	writeTextUART("UVG");   //Mostrar inicio 
-	writeUART(10);
-	writeUART(13);
-	
 	
 	while (1)
 	{
-	//	ADCSRA |= (1 << ADSC);   //Leer puerto de ADC
-		_delay_ms(10);  
-		
+	//************MENU*********************************
+	if(activa == 0){
+	writeTextUART("\n\r**************Hola como esta****************");   //Mostrar inicio 
+	writeUART(10);
+	writeUART(13);
+	writeUART(10);
+	writeTextUART("          Coloque 1 para leer potenciometro");   //Mostrar inicio
+	writeUART(10);
+	writeUART(13);
+	writeTextUART("          Coloque 2 para enviar ASCII\n\r");   //Mostrar inicio
+	writeUART(10);
+	writeUART(13);
+	activa = 1;
 	}
 	
+	if(receivedChar != 0){
+		switch(receivedChar)
+		{
+			case '1':
+			writeTextUART("\n\r------------------------------------------\n\r");
+			writeTextUART("Lectura actual de potenciometro es:");
+			ADCSRA |= (1 << ADSC);   //Leer puerto de ADC
+			writeTextUART("255\n\r");
+			writeTextUART("------------------------------------------\n\r");
+			activa = 0;
+			receivedChar = 0;
+			break;
+			
+			case '2':
+			receivedChar = 0;
+			writeTextUART("\n\rIngrese un valor\n\r");
+			activa2 = 1;
+			break;
+			
+		}
+	}
+		
+	
+}
+
 }
 
 void initUART9600(void)
@@ -70,7 +102,7 @@ void initUART9600(void)
 	
 }
 
-/*
+
 void initADC(){
 	ADMUX = 6;
 	ADMUX |= (1<<REFS0);  //Referencia AVCC = 5V
@@ -81,17 +113,18 @@ void initADC(){
 	ADCSRA |= (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);  //Habilitando prescaler de 16M/128 frecuencia = 125Khz
 	ADCSRA |= (1<<ADEN);   //Habilitando el ADC
 }
-*/
 
 
-/*
+
+
 ISR(ADC_vect)
 {
 	dato = ADCH;   //Contador general
 	ADCSRA |= (1<<ADIF); //Se borra la bandera de interrupción
 }
-*/
 
+
+//Funcion de escritura de un caracter
 void writeUART(char Caracter)
 {
 	while(!(UCSR0A & (1<<UDRE0)));  //hasta que la bandera este en 1
@@ -99,7 +132,7 @@ void writeUART(char Caracter)
 		
 }
 
-
+ //Función de escritura de una cadena de caracteres
 void writeTextUART(char * Texto){
 	uint8_t o;
 	for(o = 0; Texto[o]!= '\0'; o++){
@@ -110,9 +143,25 @@ void writeTextUART(char * Texto){
 
 ISR(USART_RX_vect)
 {
-	datoTX = UDR0;
-	UDR0 = datoTX;
-	writeUART(10);
-	writeUART(13);
+	receivedChar = UDR0; // Almacena el carácter recibido
 	
+	if (activa2 == 1){
+		// Dividir el carácter recibido en dos partes
+		uint8_t lower_bits = receivedChar & 0b00111111; // Los 6 bits menos significativos
+		uint8_t upper_bits = (receivedChar >> 6) & 0b11; // Los 2 bits más significativos
+
+		// Mostrar los 6 bits menos significativos en PORTB
+		PORTB = lower_bits;
+
+		// Mostrar los 2 bits más significativos en los pines PD6 y PD7 de PORTD
+		PORTD = (PORTD & ~0b11000000) | (upper_bits << 6);
+		activa2 = 0;
+		activa = 0;
+	}
+	
+	while(!(UCSR0A & (1<<UDRE0)));    //Mientras haya caracteres
+		UDR0 = receivedChar;
+		
+	
+
 }

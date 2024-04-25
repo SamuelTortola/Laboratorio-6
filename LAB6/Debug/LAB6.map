@@ -11,6 +11,7 @@ Allocating common symbols
 Common symbol       size              file
 
 datoTX              0x1               main.o
+dato                0x1               main.o
 
 Discarded input sections
 
@@ -194,7 +195,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x19e
+.text           0x00000000      0x2cc
  *(.vectors)
  .vectors       0x00000000       0x68 D:/Programas/Microchip studio/7.0/Packs/Atmel/ATmega_DFP/2.1.506/gcc/dev/atmega328p/avr5/crtatmega328p.o
                 0x00000000                __vector_default
@@ -271,7 +272,6 @@ END GROUP
                 0x000000a2                __vector_4
                 0x000000a2                __vector_9
                 0x000000a2                __vector_2
-                0x000000a2                __vector_21
                 0x000000a2                __vector_15
                 0x000000a2                __vector_8
                 0x000000a2                __vector_14
@@ -283,22 +283,27 @@ END GROUP
  .text.initUART9600
                 0x000000a6       0x36 main.o
                 0x000000a6                initUART9600
+ .text.initADC  0x000000dc       0x34 main.o
+                0x000000dc                initADC
+ .text.__vector_21
+                0x00000110       0x32 main.o
+                0x00000110                __vector_21
  .text.writeUART
-                0x000000dc        0xe main.o
-                0x000000dc                writeUART
+                0x00000142        0xe main.o
+                0x00000142                writeUART
  .text.writeTextUART
-                0x000000ea       0x22 main.o
-                0x000000ea                writeTextUART
- .text.main     0x0000010c       0x2e main.o
-                0x0000010c                main
+                0x00000150       0x22 main.o
+                0x00000150                writeTextUART
+ .text.main     0x00000172       0xd6 main.o
+                0x00000172                main
  .text.__vector_18
-                0x0000013a       0x60 main.o
-                0x0000013a                __vector_18
-                0x0000019a                . = ALIGN (0x2)
+                0x00000248       0x80 main.o
+                0x00000248                __vector_18
+                0x000002c8                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000019a        0x0 d:/programas/microchip studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
-                0x0000019a                _exit
-                0x0000019a                exit
+ .fini9         0x000002c8        0x0 d:/programas/microchip studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+                0x000002c8                _exit
+                0x000002c8                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -317,11 +322,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000019a        0x4 d:/programas/microchip studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+ .fini0         0x000002c8        0x4 d:/programas/microchip studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000019e                _etext = .
+                0x000002cc                _etext = .
 
-.data           0x00800100        0x4 load address 0x0000019e
+.data           0x00800100       0xf2 load address 0x000002cc
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -329,28 +334,38 @@ END GROUP
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800100        0x4 main.o
+                0x00800100       0xf1 main.o
+                                0x11e (size before relaxing)
  *(.gnu.linkonce.r*)
-                0x00800104                . = ALIGN (0x2)
-                0x00800104                _edata = .
-                0x00800104                PROVIDE (__data_end, .)
+                0x008001f2                . = ALIGN (0x2)
+ *fill*         0x008001f1        0x1 
+                0x008001f2                _edata = .
+                0x008001f2                PROVIDE (__data_end, .)
 
-.bss            0x00800104        0x1
-                0x00800104                PROVIDE (__bss_start, .)
+.bss            0x008001f2        0x7
+                0x008001f2                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
+ .bss.receivedChar
+                0x008001f2        0x1 main.o
+                0x008001f2                receivedChar
+ .bss.activa2   0x008001f3        0x2 main.o
+                0x008001f3                activa2
+ .bss.activa    0x008001f5        0x2 main.o
+                0x008001f5                activa
  *(COMMON)
- COMMON         0x00800104        0x1 main.o
-                0x00800104                datoTX
-                0x00800105                PROVIDE (__bss_end, .)
-                0x0000019e                __data_load_start = LOADADDR (.data)
-                0x000001a2                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x008001f7        0x2 main.o
+                0x008001f7                datoTX
+                0x008001f8                dato
+                0x008001f9                PROVIDE (__bss_end, .)
+                0x000002cc                __data_load_start = LOADADDR (.data)
+                0x000003be                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800105        0x0
+.noinit         0x008001f9        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800105                _end = .
+                0x008001f9                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -415,32 +430,32 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x40
+.debug_aranges  0x00000000       0x50
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x40 main.o
+                0x00000000       0x50 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x82f
+.debug_info     0x00000000      0x954
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x5f4 D:/Programas/Microchip studio/7.0/Packs/Atmel/ATmega_DFP/2.1.506/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_info    0x000005f4      0x23b main.o
+ .debug_info    0x000005f4      0x360 main.o
 
-.debug_abbrev   0x00000000      0x734
+.debug_abbrev   0x00000000      0x6f3
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x5a2 D:/Programas/Microchip studio/7.0/Packs/Atmel/ATmega_DFP/2.1.506/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_abbrev  0x000005a2      0x192 main.o
+ .debug_abbrev  0x000005a2      0x151 main.o
 
-.debug_line     0x00000000      0x337
+.debug_line     0x00000000      0x3e7
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x134 D:/Programas/Microchip studio/7.0/Packs/Atmel/ATmega_DFP/2.1.506/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_line    0x00000134      0x203 main.o
+ .debug_line    0x00000134      0x2b3 main.o
 
-.debug_frame    0x00000000       0xac
+.debug_frame    0x00000000       0xc0
  *(.debug_frame)
- .debug_frame   0x00000000       0xac main.o
+ .debug_frame   0x00000000       0xc0 main.o
 
 .debug_str      0x00000000      0x406
  *(.debug_str)
@@ -448,9 +463,9 @@ END GROUP
  .debug_str     0x00000208      0x1fe main.o
                                 0x237 (size before relaxing)
 
-.debug_loc      0x00000000      0x112
+.debug_loc      0x00000000      0x132
  *(.debug_loc)
- .debug_loc     0x00000000      0x112 main.o
+ .debug_loc     0x00000000      0x132 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -470,9 +485,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x30
+.debug_ranges   0x00000000       0x40
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x30 main.o
+ .debug_ranges  0x00000000       0x40 main.o
 
 .debug_macro
  *(.debug_macro)
